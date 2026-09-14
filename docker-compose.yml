@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  provider-reservas:
+    build: ./provider-reservas
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+
+  consumer-portal:
+    build: ./consumer-portal
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - PROVIDER_URL=http://provider-reservas:3000
+    depends_on:
+      - provider-reservas
+
+  consumer-admin:
+    build: ./consumer-admin
+    ports:
+      - "3002:3002"
+    environment:
+      - PORT=3002
+      - PROVIDER_URL=http://provider-reservas:3000
+    depends_on:
+      - provider-reservas
