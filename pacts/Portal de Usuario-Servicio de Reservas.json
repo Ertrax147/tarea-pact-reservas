@@ -1,0 +1,221 @@
+{
+  "consumer": {
+    "name": "Portal de Usuario"
+  },
+  "interactions": [
+    {
+      "description": "una solicitud para crear una reserva inválida",
+      "providerStates": [
+        {
+          "name": "El consumidor intenta crear una reserva indicando una duración de 0 horas"
+        }
+      ],
+      "request": {
+        "body": {
+          "fecha": "2026-10-10",
+          "horas": 0,
+          "sala": "SALA-1",
+          "userId": "U100"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/reservas"
+      },
+      "response": {
+        "body": {
+          "error": "La cantidad de horas es inválida"
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "body": {
+            "$.error": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "status": 400
+      }
+    },
+    {
+      "description": "una solicitud para crear una reserva válida",
+      "providerStates": [
+        {
+          "name": "El consumidor solicita una reserva con una cantidad de horas válida"
+        }
+      ],
+      "request": {
+        "body": {
+          "fecha": "2026-10-10",
+          "horas": 2,
+          "sala": "SALA-1",
+          "userId": "U100"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/reservas"
+      },
+      "response": {
+        "body": {
+          "activa": true,
+          "fecha": "2026-10-10",
+          "horas": 2,
+          "id": "R-1234",
+          "sala": "SALA-1",
+          "userId": "U100"
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "body": {
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "status": 201
+      }
+    },
+    {
+      "description": "una solicitud para obtener las reservas del usuario U100",
+      "providerStates": [
+        {
+          "name": "El usuario U100 posee al menos una reserva activa"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/reservas",
+        "query": {
+          "userId": [
+            "U100"
+          ]
+        }
+      },
+      "response": {
+        "body": [
+          {
+            "activa": true,
+            "fecha": "2026-10-10",
+            "horas": 2,
+            "id": "R-1000",
+            "sala": "SALA-1",
+            "userId": "U100"
+          }
+        ],
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 1
+                }
+              ]
+            },
+            "$[*].activa": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].fecha": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].horas": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[*].sala": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "una solicitud para obtener las reservas del usuario U200",
+      "providerStates": [
+        {
+          "name": "El usuario U200 no posee reservas"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/reservas",
+        "query": {
+          "userId": [
+            "U200"
+          ]
+        }
+      },
+      "response": {
+        "body": [],
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "status": 200
+      }
+    }
+  ],
+  "metadata": {
+    "pact-js": {
+      "version": "17.1.4"
+    },
+    "pactRust": {
+      "ffi": "0.5.7",
+      "models": "1.3.15"
+    },
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  },
+  "provider": {
+    "name": "Servicio de Reservas"
+  }
+}
