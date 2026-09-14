@@ -1,0 +1,121 @@
+{
+  "consumer": {
+    "name": "Servicio de Administración"
+  },
+  "interactions": [
+    {
+      "description": "una solicitud para verificar la reserva R-1001",
+      "providerStates": [
+        {
+          "name": "La reserva R-1001 existe y está activa"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/reservas/R-1001"
+      },
+      "response": {
+        "body": {
+          "reserva": {
+            "activa": true,
+            "fecha": "2026-10-10",
+            "horas": 2,
+            "id": "R-1001",
+            "sala": "SALA-1",
+            "userId": "U100"
+          },
+          "valid": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "body": {
+            "$.reserva.fecha": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.reserva.horas": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.reserva.sala": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.reserva.userId": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "una solicitud para verificar la reserva R-9999",
+      "providerStates": [
+        {
+          "name": "Se intenta consultar un identificador de reserva que no existe"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/reservas/R-9999"
+      },
+      "response": {
+        "body": {
+          "error": "Reserva no válida",
+          "valid": false
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "body": {
+            "$.error": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "status": 404
+      }
+    }
+  ],
+  "metadata": {
+    "pact-js": {
+      "version": "17.1.4"
+    },
+    "pactRust": {
+      "ffi": "0.5.7",
+      "models": "1.3.15"
+    },
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  },
+  "provider": {
+    "name": "Servicio de Reservas"
+  }
+}
